@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-deployment
+spec:
+  replicas: 2 # Number of desired replicas
+  selector:
+    matchLabels:
+      app: sample-ubuntu
+  template:
+    metadata:
+      labels:
+        app: sample-ubuntu
+    spec:
+      containers:
+      - name: ubuntu-demo
+        image: ubuntu:latest # Use the latest Ubuntu image
+        command: ["/bin/sleep", "infinity"] # Keep the container running
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+      volumes:
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-tls"
+
