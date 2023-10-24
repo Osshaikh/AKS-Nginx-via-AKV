@@ -1,0 +1,25 @@
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-tls
+spec:
+  provider: azure
+  secretObjects:                            # secretObjects defines the desired state of synced K8s secret objects
+    - secretName: ingress-tls-csi
+      type: kubernetes.io/tls
+      data: 
+      - objectName: testdomain
+        key: tls.key
+      - objectName: testdomain
+        key: tls.crt
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: manageidentityguid
+    keyvaultName: akv-gap-aks                 # the name of the AKV instance
+    objects: |
+      array:
+        - |
+          objectName: testdomain
+          objectType: secret
+    tenantId: yourtenantid
